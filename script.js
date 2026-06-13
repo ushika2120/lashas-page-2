@@ -19,6 +19,47 @@ langBtns.en.addEventListener('click', () => setLang('en'));
 // On load, set language from localStorage or default to KA
 setLang(localStorage.getItem('geopoint-lang') || 'ka');
 
+// Auto-playing image slider
+const slider = document.querySelector('[data-slider]');
+if (slider) {
+    const slides = Array.from(slider.querySelectorAll('.slider-image'));
+    const dots = Array.from(slider.querySelectorAll('[data-slider-dot]'));
+    const prevBtn = slider.querySelector('[data-slider-prev]');
+    const nextBtn = slider.querySelector('[data-slider-next]');
+    let currentSlide = 0;
+    let sliderTimer;
+
+    function showSlide(index) {
+        currentSlide = (index + slides.length) % slides.length;
+        slides.forEach((slide, i) => slide.classList.toggle('active', i === currentSlide));
+        dots.forEach((dot, i) => dot.classList.toggle('active', i === currentSlide));
+    }
+
+    function startSlider() {
+        clearInterval(sliderTimer);
+        sliderTimer = setInterval(() => showSlide(currentSlide + 1), 4000);
+    }
+
+    prevBtn.addEventListener('click', () => {
+        showSlide(currentSlide - 1);
+        startSlider();
+    });
+
+    nextBtn.addEventListener('click', () => {
+        showSlide(currentSlide + 1);
+        startSlider();
+    });
+
+    dots.forEach(dot => {
+        dot.addEventListener('click', () => {
+            showSlide(Number(dot.dataset.sliderDot));
+            startSlider();
+        });
+    });
+
+    startSlider();
+}
+
 // Smooth scroll for nav links
 Array.from(document.querySelectorAll('a[href^="#"]')).forEach(link => {
     link.addEventListener('click', function(e) {
